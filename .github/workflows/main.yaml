@@ -1,0 +1,31 @@
+name: Despliegue Automático a Surge
+
+# El proceso se dispara cada vez que se haga un push a la rama main
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Descargar el codigo del repositorio en la maquina virtual de GitHub
+      - name: Clonar repositorio
+        uses: actions/checkout@v4
+
+      # Instala Node.js para poder usar npm
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-node-version: '20'
+
+      # Instala la herramienta de Surge de manera global en el entorno de GitHub
+      - name: Instalar Surge
+        run: npm install -g surge
+
+      # Ejecuta el despliegue usando los Secrets configurados
+      # Reemplaza 'tu-dominio-unico.surge.sh' por el subdominio que tú quieras usar.
+      - name: Desplegar en Surge
+        run: surge ./ mariely-proyecto.surge.sh --token ${{ secrets.SURGE_TOKEN }} --login ${{ secrets.SURGE_LOGIN }}
